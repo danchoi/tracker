@@ -1,0 +1,18 @@
+- title: Call CTO of Alydar
+  notes:
+  context: home
+  priority: high
+  due_at: 8-13-2011
+- title: Do Tracker project
+  notes:
+  context: home
+  priority: medium
+- title: Study postgresql 'with recursive' queries
+  notes:
+  context: home
+  priority: medium
+- title: Make Vim interface
+  notes:
+  context: home
+  priority: medium
+

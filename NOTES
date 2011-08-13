@@ -1,0 +1,14 @@
+
+[choi kaja~]$ psql tracker --command "select * from tasks"
+
+or
+
+[choi kaja~]$ psql tracker -c "select * from tasks"
+
+ task_id |          title          | notes | context | priority | parent_id |         created_at         | completed_at
+---------+-------------------------+-------+---------+----------+-----------+----------------------------+--------------
+       1 | call with CTO at Alydar |       | home    |          |           | 2011-08-13 10:40:03.725077 |
+(1 row)
+
+
+
