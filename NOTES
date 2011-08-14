@@ -11,4 +11,171 @@ or
 (1 row)
 
 
+With quries: p. 99
+
+
+WITH RECURSIVE 
+
+This selects all the subtasks (all descendants) of a particular task;
+
+with recursive subtasks(task_id, title, parent_id) as (
+  select task_id, title, parent_id from tasks where parent_id = 3
+union 
+  select 
+    t.task_id, t.title, t.parent_id 
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+)
+select * from subtasks;
+
+Good explanation recursive queries
+
+  http://old.storytotell.org/blog/2009/08/11/postgresql84-recursive-queries.html
+
+Parameterize recursive CTE
+http://explainextended.com/2010/12/24/postgresql-parametrizing-a-recursive-cte/
+
+------------------------------------------------------------------------
+
+tracker=# insert into tasks (title, parent_id) values ('find good example', 4);
+
+compare:
+
+UNION
+
+with recursive subtasks(task_id, title, parent_id) as (
+  select task_id, title, parent_id from tasks where parent_id = 3
+union
+  select
+    t.task_id, t.title, t.parent_id
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks;
+
+ task_id |                   title                   | parent_id
+---------+-------------------------------------------+-----------
+       4 | Study postgresql 'with recursive' queries |         3
+       5 | Make Vim interface                        |         3
+       6 | find good example                         |         4
+(3 rows)
+
+
+with recursive subtasks(task_id, title, parent_id) as (
+  select task_id, title, parent_id from tasks where task_id = 3
+union 
+  select
+    t.task_id, t.title, t.parent_id
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks;
+
+ task_id |                   title                   | parent_id
+---------+-------------------------------------------+-----------
+       3 | Do Tracker project                        |
+       4 | Study postgresql 'with recursive' queries |         3
+       5 | Make Vim interface                        |         3
+       6 | find good example                         |         4
+(4 rows)
+
+
+Union vs union all doesn't make a difference
+
+We can select task_id = 4 to find a subtree.
+
+Show depth:
+
+with recursive subtasks(task_id, title, parent_id, depth) as (
+  select task_id, title, parent_id, 0 from tasks where task_id = 3
+union 
+  select
+    t.task_id, t.title, t.parent_id, depth+1
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks;
+
+ task_id |                   title                   | parent_id | depth
+---------+-------------------------------------------+-----------+-------
+       3 | Do Tracker project                        |           |     0
+       4 | Study postgresql 'with recursive' queries |         3 |     1
+       5 | Make Vim interface                        |         3 |     1
+       6 | find good example                         |         4 |     2
+(4 rows)
+
+
+------------------------------------------------------------------------
+
+try breadcrumbs to order
+
+
+
+with recursive subtasks(task_id, title, parent_id, depth, path) as (
+  select task_id, title, parent_id, 0, '3' from tasks where task_id = 3
+union
+  select
+    t.task_id, t.title, t.parent_id, depth+1, (path || '/' || t.task_id)
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks order by path;
+
+
+tracker=# \e
+ task_id |                   title                   | parent_id | depth | path
+---------+-------------------------------------------+-----------+-------+-------
+       3 | Do Tracker project                        |           |     0 | 3
+       4 | Study postgresql 'with recursive' queries |         3 |     1 | 3/4
+       6 | find good example                         |         4 |     2 | 3/4/6
+       5 | Make Vim interface                        |         3 |     1 | 3/5
+(4 rows)
+
+If I try to use an Array column, i get this error:
+
+ERROR:  could not implement recursive UNION
+DETAIL:  All column datatypes must be hashable.
+tracker=#
+
+
+tracker=# select array[1,2] a union select array[3] union select array[3,1] a order by a asc;
+   a
+-------
+ {1,2}
+ {3}
+ {3,1}
+(3 rows)
+
+with recursive subtasks(task_id, title, parent_id, depth, path) as (
+  select task_id, title, parent_id, 0, array[task_id]  from tasks where task_id = 3
+union
+  select
+    t.task_id, t.title, t.parent_id, depth+1, array[t.task_id]
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks order by path;
+
+
+tracker=# select array[1] || 2;
+ ?column?
+----------
+ {1,2}
+(1 row)
+
+THE KEY IS UNION ALL TO GET THE ARRAY TO WORK!
+------------------------------------------------------------------------
+THIS WORKS:
+
+with recursive subtasks(task_id, title, parent_id, depth, path) as (
+  select task_id, title, parent_id, 0, array[task_id]  from tasks where task_id = 3
+union all
+  select
+    t.task_id, t.title, t.parent_id, depth+1, path || array[t.task_id]
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks order by path;
+
+
+------------------------------------------------------------------------
+Put spaces or dashes and plus sign prefix to title depending on the 
+nesting depth and also on whether it is expanded or collapsed.
+
+
+
 
