@@ -372,11 +372,33 @@ This seems to work
    Make Vim interface                        |         3 |     1 |        0 | {{0,1},{1,0}}       |       5
    Study postgresql 'with recursive' queries |         3 |     1 |        1 | {{0,1},{1,1}}       |       4
      find good example                       |         4 |     2 |        0 | {{0,1},{1,1},{2,0}} |       6
- call with CTO at Alydar                     |           |     0 |        2 | {{0,3}}             |       1
+ call with CTO at Alydar                     |           |     0 |        2 | {{0,2}}             |       1
 (6 rows)
 
+We actually don't need the depth in the path
+
+with recursive subtasks(title, parent_id, depth, position, path, task_id) as (
+  select title, parent_id, 0, position, array[position], task_id from tasks where parent_id is null
+union all
+  select
+    lpad('', (depth+1)*2 , '  ') || t.title, t.parent_id, depth+1, t.position, path || t.position, t.task_id
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks order by path;
+
+
+                    title                    | parent_id | depth | position |  path   | task_id
+---------------------------------------------+-----------+-------+----------+---------+---------
+ Call CTO of Alydar                          |           |     0 |        0 | {0}     |       2
+ Do Tracker project                          |           |     0 |        1 | {1}     |       3
+   Make Vim interface                        |         3 |     1 |        0 | {1,0}   |       5
+   Study postgresql 'with recursive' queries |         3 |     1 |        1 | {1,1}   |       4
+     find good example                       |         4 |     2 |        0 | {1,1,0} |       6
+ call with CTO at Alydar                     |           |     0 |        2 | {2}     |       1
+(6 rows)
 
 ------------------------------------------------------------------------
+
 So we can make a generic outline!
 
 This is good. This is the core proof of concept.
@@ -390,9 +412,6 @@ or task-tree
 compete against omnifocus.
 
 omnifocus for power users
-
-
-
 
 
 
