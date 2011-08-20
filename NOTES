@@ -397,6 +397,13 @@ union all
  call with CTO at Alydar                     |           |     0 |        2 | {2}     |       1
 (6 rows)
 
+Note that depth is a derived value. And the path is built from depth.
+
+The only arduous point is that the positions must be recalculated if a node is
+moved up or down the hierarchy. But the good thing is that the ripple effect is
+contained. Only the positions at the directly affected levels need be
+recalculated.
+
 ------------------------------------------------------------------------
 
 So we can make a generic outline!
