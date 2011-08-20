@@ -238,6 +238,7 @@ identifies the current user.
 
 For position ordering, put a decimal in the elements of the path and order by that.
 
+------------------------------------------------------------------------
 
 Use spaces
 
@@ -319,5 +320,62 @@ union all
   from tasks t, subtasks s
   where s.task_id  = t.parent_id
 ) select * from subtasks order by path[1:depth], position;
+
+------------------------------------------------------------------------
+
+What if we tried a different approach.
+
+The text file can keep the structure, and the database just keeps the row data,
+instead of the relative positions. It's like the orthogonality of files and
+directories.
+
+If row data and the positioning data are separate, where is row data?
+
+Another approach is to return the data unordered from PostgreSQL, and have Ruby order it.
+
+This is a hard problem. 
+
+Another idea. We can change the path to include items that order, like letters
+
+Order by in a recusrive query is not permitted!
+
+What if we just store the positions directly as outline numbers in an array, e.g.
+
+{1,1,1}
+{1,1,2} etc?
+
+The downside is that reordering is burdensome.
+
+Maybe I should stick with outlines for a while?
+
+Maybe the ordering should just be by priority?
+
+This is really an outliner first.
+
+Maybe the path should be {{depth, position}}
+
+with recursive subtasks(title, parent_id, depth, position, path, task_id) as (
+  select title, parent_id, 0, position, array[array[0, position]], task_id from tasks where parent_id is null
+union all
+  select
+    lpad('', (depth+1)*2 , '  ') || t.title, t.parent_id, depth+1, t.position, path || array[depth+1, t.position], t.task_id
+  from tasks t, subtasks s
+  where s.task_id  = t.parent_id
+) select * from subtasks order by path;
+
+This seems to work
+
+                    title                    | parent_id | depth | position |        path         | task_id
+---------------------------------------------+-----------+-------+----------+---------------------+---------
+ Call CTO of Alydar                          |           |     0 |        0 | {{0,0}}             |       2
+ Do Tracker project                          |           |     0 |        1 | {{0,1}}             |       3
+   Make Vim interface                        |         3 |     1 |        0 | {{0,1},{1,0}}       |       5
+   Study postgresql 'with recursive' queries |         3 |     1 |        1 | {{0,1},{1,1}}       |       4
+     find good example                       |         4 |     2 |        0 | {{0,1},{1,1},{2,0}} |       6
+ call with CTO at Alydar                     |           |     0 |        3 | {{0,3}}             |       1
+(6 rows)
+
+
+------------------------------------------------------------------------
 
 
