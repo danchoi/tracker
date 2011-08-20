@@ -372,10 +372,15 @@ This seems to work
    Make Vim interface                        |         3 |     1 |        0 | {{0,1},{1,0}}       |       5
    Study postgresql 'with recursive' queries |         3 |     1 |        1 | {{0,1},{1,1}}       |       4
      find good example                       |         4 |     2 |        0 | {{0,1},{1,1},{2,0}} |       6
- call with CTO at Alydar                     |           |     0 |        3 | {{0,3}}             |       1
+ call with CTO at Alydar                     |           |     0 |        2 | {{0,3}}             |       1
 (6 rows)
 
 
 ------------------------------------------------------------------------
+
+So we can make a generic outline!
+
+This is good. This is the core proof of concept.
+
 
 
