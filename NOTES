@@ -463,8 +463,8 @@ OR, first change values as if the moving node got deleted; THEN
 insert the moved node as if it were just created.
 
 Deletion effects:
-- find all siblings
-  - fix their position numbers
+- find all current siblings
+- change their position numbers to fill up 'hole'
 
 Insertion effects:
 - find all children of the parent under which insertion will take place
@@ -472,8 +472,28 @@ Insertion effects:
 - put node in place by setting the values for the hole (parent_id and
   position)
 
+functions:
 
 
+NOTE we need a root parent_id and not just null
+
+function inputs
+- task_id, target parent_id, target_position
+
+  - set parent_id and position of moving node to null 
+  - decrease position of lower siblings by one
+    - this can be a sql question with a select
+
+      update tasks set position = position - 1 where parent_id = ? and position > (moving_node's position)
+
+  - for a given parent_id and target position:
+  - increment the position numbers of lower siblings by one
+
+      update tasks set position = position + 1 where parent_id = (target parent) and position >= (target position)
+
+  - set parent_id and position of inserted node
+
+      update tasks set position = ? and parent_id ? where task_id = ?
 
 
 
