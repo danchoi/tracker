@@ -521,4 +521,17 @@ Note that
   and we don't expect a solution until Postgres 8.0 (if then).
 
 
+TODO
+- what to do in the case of a null parent?
+  The functions may work better if the top level items have parent_id of 0.
+
+
+I think the best approach will be to use triggers to update the 
+positions. 
+
+- When a new task is inserted 
+
+
+
+
  vim: set nowrap:
