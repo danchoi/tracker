@@ -15,7 +15,7 @@ BEGIN
 END $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE VIEW outline AS 
-  WITH recursive subtasks(title, parent_id, depth, position, path, task_id) as (
+  with recursive subtasks(title, parent_id, depth, position, path, task_id) as (
     select title, 0, 0, position, array[position], task_id from tasks where parent_id = 0
   union all
     select
