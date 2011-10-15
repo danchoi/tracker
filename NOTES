@@ -495,6 +495,20 @@ function inputs
 
       update tasks set position = ? and parent_id ? where task_id = ?
 
+Turn these into plpgsql functions?
+A remove function and insert function
+
+This should be a transaction to preserve integrity
+
+CREATE OR REPLACE FUNCTION remove_task(task_id) RETURNS NULL AS $$
+BEGIN
+  update tasks set position = position - 1 
+  where parent_id = (select parent_id where from tasks where task_id = $1) 
+    and position > (select position where from tasks where task_id = $1);
+  update tasks set parent_id = null, position = null where task_id = $1;  
+END $$ LANGUAGE plpgsql;
+
+
 
 
  vim: set nowrap:
