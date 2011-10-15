@@ -532,6 +532,10 @@ positions.
 - When a new task is inserted 
 
 
+Now the parent_id = 0 for tasks at root. This allows us to set parent_id
+to NULL for deleted items, and have null parent also be the archived or
+limbo state.
+
 
 
  vim: set nowrap:
