@@ -540,7 +540,35 @@ limbo state.
 Next set is to focus on the interface and use the two functions
 
   remove_task(task_id)
-  insert_task(task_id)
+  insert_task(task_id, target_parent, target_position)
 
+And we need a simple way to create a task. The insertion is the second
+step.
+
+At insertion step, later we'll need a check to see that the task being
+inserted does not first need to be removed;
+
+
+Just did a comparison of 
+
+ruby lib/outln.rb
+real    0m0.884s
+user    0m0.820s
+sys     0m0.050s
+
+psql tracker -c 'select * from outline'
+real    0m0.103s
+user    0m0.080s
+sys     0m0.010s
 
  
+So let's try to leave out a Ruby layer and just have Vim interact with
+PostgreSQL. Except perhaps when creating a new task or editing one.
+
+  Unless we have a http Sinatra or EventMachine interface that may be
+  remote and shared. They might be better also because we can debug more
+  easily by tailing the log output as Vim sends commands and data over.
+
+
+
+
