@@ -537,5 +537,10 @@ to NULL for deleted items, and have null parent also be the archived or
 limbo state.
 
 
+Next set is to focus on the interface and use the two functions
 
- vim: set nowrap:
+  remove_task(task_id)
+  insert_task(task_id)
+
+
+ 

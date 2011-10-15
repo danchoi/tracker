@@ -5,8 +5,8 @@ create table tasks (
   notes text,
   context varchar,
   priority varchar, /* maybe change to enum */
-  parent_id integer not null default 0, /* add foreign key constraint later; use for recursive queries */
-  position integer,
+  parent_id integer, /* null means that the node is floating */
+  position integer, /* null means that the node is floating */
   created_at timestamp default now(),
   due_at timestamp, /* add this */
   completed_at timestamp
