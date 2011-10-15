@@ -509,6 +509,16 @@ BEGIN
 END $$ LANGUAGE plpgsql;
 
 
+Note that
+  
+  Each PL/pgSQL function is automatically treated as a single
+  transaction by Postgres.   As such, the entire function either
+  succeeds or fails.
+
+  To manage a transaction *inside* the PL/pgSQL function, Postgres would
+  have to support nested transactions ... which we currently don't.
+  Nested transactions and MVCC are somewhat of a tangle to reconcile,
+  and we don't expect a solution until Postgres 8.0 (if then).
 
 
  vim: set nowrap:
