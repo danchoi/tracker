@@ -1,12 +1,17 @@
+drop table if exists tasks CASCADE;
 create table tasks (
   task_id serial primary key,
   title varchar,
   notes text,
   context varchar,
   priority varchar, /* maybe change to enum */
-  parent_id integer, /* add foreign key constraint; use for recursive queries */
+  parent_id integer not null default 0, /* add foreign key constraint later; use for recursive queries */
   position integer,
   created_at timestamp default now(),
   due_at timestamp, /* add this */
   completed_at timestamp
 );
+
+alter table tasks add constraint task_parent_position_uniq_key UNIQUE (parent_id, position);
+
+\i db/functions.sql
