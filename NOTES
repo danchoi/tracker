@@ -570,5 +570,25 @@ PostgreSQL. Except perhaps when creating a new task or editing one.
   easily by tailing the log output as Vim sends commands and data over.
 
 
+------------------------------------------------------------------------
+
+Turn this into a Sintra app. Group project tracking. May be more useful.
+
+A free version of basecamp. Plus a chat room.
+
+Maybe a clean substitute for JIRA too.
+
+Double checkboxes (for different testers to confirm something)
+
+Sitemaps are like outlines. Easier to see the whole structure than just
+using hyperlinks.
+
+Can create connectors to Gmail and other systems. Or RSS feeds to flag
+changes and generate notices.
+
+Implement the basic functionality today.
+
+
+
 
 

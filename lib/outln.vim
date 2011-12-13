@@ -4,5 +4,6 @@ let s:client_cmd = "ruby -I lib lib/outln.rb "
 
 let res = system(s:client_cmd)
 
+set nowrap
 put =res
 
